@@ -1,0 +1,11 @@
+{
+    "name": "touffik/supinternet-orm",
+    "description": "PHP ORM home made",
+    "authors": [
+        {
+            "name": "RaphaelAugustin",
+            "email": "taf.augustin@gmail.com"
+        }
+    ],
+    "require": {}
+}
