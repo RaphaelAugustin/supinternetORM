@@ -1,0 +1,7 @@
+# This file is a "template" of what your parameters.yml file should look like
+    host:       127.0.0.1
+    port:       ~
+    name:       symfony
+    user:       root
+    password:   ~
+    driver:     mysql
