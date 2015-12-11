@@ -30,6 +30,7 @@ class Database
 
     try {
         $PDO = new \PDO($dsn, $parameters["user"], $parameters["password"]);
+        $this->PDO = $PDO;
         echo "connect success";
 
     } catch (PDOException $e) {
