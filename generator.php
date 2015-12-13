@@ -32,7 +32,8 @@ $className = $argv[5];
 
 $tabs = 2;
 $code = "<?php\n\nnamespace Model;\n\n";
-$code .=  "class ".ucfirst($className)." \n{\n";
+$code .= 'use Touffik\Entity;' . "\n\n" ;
+$code .=  "class ".ucfirst($className)." extends Entity \n{\n";
 
 $code .= "\n";
 foreach ($fields as $field)
@@ -58,5 +59,8 @@ foreach ($fields as $field)
 }
 $code .= "}\n";
 var_dump($code);
-
+if (!is_dir('Model/')) {
+    // dir doesn't exist, make it
+    mkdir('Model/');
+}
 file_put_contents("Model/". ucfirst($className).".php", $code);

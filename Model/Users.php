@@ -2,7 +2,9 @@
 
 namespace Model;
 
-class Users 
+use Touffik\Entity;
+
+class Users extends Entity 
 {
 
     protected $id;

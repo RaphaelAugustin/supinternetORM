@@ -11,17 +11,17 @@ namespace Touffik;
 
 class Entity
 {
-    public function save()
-    {
 
+    public function save() {
+        $query = new Query();
+        $query->save($this);
+    }
+    public function delete() {
+        $query = new Query();
+        $query->delete($this);
     }
 
-    public function delete()
-    {
-
-    }
-    public function getProperties()
-    {
-
+    public function getProperties() {
+        return get_object_vars($this);
     }
 }
