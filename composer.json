@@ -13,7 +13,8 @@
 
     "autoload": {
       "psr-4": {
-        "Touffik\\": "src/"
+        "Touffik\\": "src/",
+        "Model\\": "app/Model"
       }
     }
 }

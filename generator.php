@@ -59,8 +59,11 @@ foreach ($fields as $field)
 }
 $code .= "}\n";
 var_dump($code);
-if (!is_dir('Model/')) {
+if (!is_dir('app/Model/')) {
     // dir doesn't exist, make it
-    mkdir('Model/');
+    if (!is_dir('app/')){
+        mkdir('app/');
+    }
+    mkdir('app/Model/');
 }
-file_put_contents("Model/". ucfirst($className).".php", $code);
+file_put_contents("app/Model/". ucfirst($className).".php", $code);

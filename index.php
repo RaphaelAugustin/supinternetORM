@@ -6,9 +6,18 @@
  * Time: 13:32
  */
 
-use Touffik\Database;
-
+use Model\Users;
 require_once 'vendor/autoload.php';
 
 
-$db = new Database();
+//$db = new Database();
+
+
+$user = new Users;
+$user->setName('touffik');
+$user->setEmail('test');
+$user->setPassword('test');
+//$user->setId(1);
+
+var_dump($user);
+$user->save();

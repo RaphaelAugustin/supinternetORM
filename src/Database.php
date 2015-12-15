@@ -12,12 +12,11 @@ namespace Touffik;
 
 use Symfony\Component\Yaml\Parser;
 
-class Database
+ class Database
 {
 
-    protected $PDO;
 
-    public function __construct()
+    public static function getConnection()
     {
 
         $yaml = new Parser();
@@ -30,8 +29,8 @@ class Database
 
     try {
         $PDO = new \PDO($dsn, $parameters["user"], $parameters["password"]);
-        $this->PDO = $PDO;
         echo "connect success";
+        return $PDO;
 
     } catch (PDOException $e) {
         echo 'Connexion échouée : ' . $e->getMessage();
