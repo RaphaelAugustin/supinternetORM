@@ -7,17 +7,19 @@
  */
 
 use Model\Users;
+use Touffik\Query;
 require_once 'vendor/autoload.php';
 
 
-//$db = new Database();
 
 
 $user = new Users;
-$user->setName('touffik');
-$user->setEmail('test');
+$user->setName('Titi');
+$user->setEmail('test@test.fr');
 $user->setPassword('test');
-//$user->setId(1);
 
-var_dump($user);
 $user->save();
+////$user = new Users();
+//var_dump($user);
+$userQuery = new Query();
+$userQuery->find('users');
