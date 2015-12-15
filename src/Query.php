@@ -11,7 +11,7 @@ namespace Touffik;
 
 
 
-class Query extends Database
+class Query
 {
 
     private $select = "*";
@@ -19,46 +19,28 @@ class Query extends Database
     private $orderLimit = "1";
     private $condition = "true";
 
-//    private $PDO;
-//
-//    public function __construct()
-//    {
-//
-//        $yaml = new Parser();
-//
-//        $parameters = $yaml->parse(file_get_contents('config/parameters.yml'));
-//        $parameters = $parameters['parameters'];
-//
-//        $dsn = $parameters['driver'] . ':dbname=' . $parameters['name'] . ';host=' . $parameters['host'];
-//
-//
-//        try {
-//            $PDO = new \PDO($dsn, $parameters["user"], $parameters["password"]);
-//            $this->PDO = $PDO;
-//            echo "connect success";
-//
-//        } catch (PDOException $e) {
-//            echo 'Connexion échouée : ' . $e->getMessage();
-//        }
-//
-//    }
-
-    public function orderBy(string $column)
+    public function orderBy($column)
     {
         $this->orderBy = $column;
     }
 
-    public function where(string $condition)
+    public function where($condition)
     {
         $this->condition = $condition;
     }
 
 
-
     public function find($table)
     {
-        $req = $this->PDO->prepare("SELECT $this->select FROM $table WHERE $this->condition ORDER BY $this->orderBy");
+        $con = Database::getConnection();
+        $sql = "SELECT $this->select FROM $table WHERE $this->condition ORDER BY $this->orderBy";
+        $req = $con->prepare($sql);
         $req->execute();
+        if ($req->errorInfo()[2] != null) {
+            Database::errorLog($req);
+        } else {
+            Database::accessLog($sql);
+        }
         $res = [];
         foreach ($req->fetchAll() as $datas => $data) {
             $res[] = $this->createEntity($table, $data);
@@ -72,51 +54,56 @@ class Query extends Database
 
     public function findOne($table)
     {
-        $req = $this->PDO->prepare("SELECT $this->select FROM $table WHERE $this->condition ORDER BY $this->orderBy LIMIT $this->orderLimit");
-        $req->execute();
-        $res = $this->createEntity($table, $req->fetch());
 
+        $con = Database::getConnection();
+        $sql = "SELECT $this->select FROM $table WHERE $this->condition  ORDER BY $this->orderBy LIMIT $this->orderLimit";
+        $req = $con->prepare($sql);
+        $req->execute();
+        if ($req->errorInfo()[2] != null) {
+            Database::errorLog($req);
+        } else {
+            Database::accessLog($sql);
+        }
+        $res = $req->fetch();
+        if ($res != false) {
+            $entity = $this->createEntity($table, $res);
+        } else {
+            $entity = false;
+        }
         $this->orderBy = "ASC";
         $this->condition = "1";
         $this->select = "*";
-        return $res;
+
+
+        return $entity;
 
     }
 
-
-
-    public function save($object)
+    public function createEntity($name, $datas)
     {
-        $properties = $object->getProperties();
-        $table = strtolower(get_class($object));
-        $id = $object->getId();
+        $name = 'Model\\' . ucfirst($name);
+        $newEntity = new $name();
 
-        // used for do an Insert
-        if ($id == null) {
-            $req = $this->PDO->prepare("INSERT INTO $table (id) VALUES (DEFAULT);");
-            $req->execute();
-            $id = $this->PDO->lastInsertId();
-
-        }
-        $set = "";
-        $i = 0;
-        foreach ($properties as $key => $data) {
-            $key = str_replace("*", "", $key);
-            if ($data != null) {
-                if ($i > 0) $set .= ",";
-                $set .= " $key = '$data'";
-                $i++;
+        foreach ($datas as $key => $value) {
+            if (gettype($key) != 'integer') {
+                $function = 'set' . $key;
+                $newEntity->$function($value);
             }
         }
-        $req = $this->PDO->prepare("UPDATE $table SET $set WHERE id = '$id';");
-        $req->execute();
+        return $newEntity;
     }
 
-
-    public function delete($object)
+    public function count($table)
     {
-        $tablename = strtolower(get_class($object));
-        $req = $this->PDO->prepare("DELETE $tablename WHERE $object->getId()");
+        $con = Database::getConnection();
+        $sql = "SELECT COUNT(*) FROM $table WHERE $this->condition  ORDER BY $this->orderBy";
+        $req = $con->prepare($sql);
         $req->execute();
+        if ($req->errorInfo()[2] != null) {
+            Database::errorLog($req);
+        } else {
+            Database::accessLog($sql);
+        }
+        return $req->fetch()[0];
     }
 }

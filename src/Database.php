@@ -38,4 +38,23 @@ use Symfony\Component\Yaml\Parser;
 
 
     }
+
+     public static function errorLog($req)
+     {
+         $file = __DIR__."/../logs/error.log";
+         if (!file_exists($file)) {
+             file_put_contents($file, "Error log: \n");
+         }
+         file_put_contents($file, date("\[d/m/y H:i:s\]")." : ".$req->errorInfo()[2]." \n", FILE_APPEND);
+     }
+
+     public static function accessLog($sql)
+     {
+         $file = __DIR__."/../logs/access.log";
+         if (!file_exists($file)) {
+             file_put_contents($file, "LOGS ACCESS: \n");
+         }
+         file_put_contents($file, date("\[d/m/y H:i:s\]")." : ".$sql." \n", FILE_APPEND);
+
+     }
 }
